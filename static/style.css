@@ -1,0 +1,430 @@
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --cream: #faf8f4;
+    --ink: #1a1814;
+    --ink-muted: #6b6760;
+    --ink-faint: #a8a49e;
+    --accent: #2d5a3d;
+    --accent-light: #edf4ef;
+    --accent-hover: #234830;
+    --border: #e8e4dd;
+    --surface: #ffffff;
+    --radius: 14px;
+    --radius-sm: 8px;
+}
+
+body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+    position: relative;
+    overflow-x: hidden;
+}
+
+.bg-blur {
+    position: fixed;
+    top: -200px;
+    right: -200px;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(45,90,61,0.08) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.container {
+    width: 100%;
+    max-width: 560px;
+    position: relative;
+    z-index: 1;
+}
+
+/* ── Header ── */
+.header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.badge {
+    display: inline-block;
+    background: var(--accent-light);
+    color: var(--accent);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 100px;
+    margin-bottom: 1.25rem;
+}
+
+h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(1.8rem, 5vw, 2.75rem);
+    font-weight: 400;
+    color: var(--ink);
+    line-height: 1.15;
+    margin-bottom: 0.75rem;
+    letter-spacing: -0.02em;
+}
+
+.subtitle {
+    font-size: 15px;
+    color: var(--ink-muted);
+    line-height: 1.6;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+/* ── Form ── */
+.form {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    letter-spacing: 0.01em;
+    flex-wrap: wrap;
+}
+
+.optional {
+    font-weight: 400;
+    color: var(--ink-faint);
+    font-size: 12px;
+}
+
+/* ── File drop ── */
+.file-drop {
+    border: 1.5px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 2rem 1.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    position: relative;
+    background: #fdfdfc;
+    user-select: none;
+}
+
+.file-drop:hover,
+.file-drop.drag-over {
+    border-color: var(--accent);
+    background: var(--accent-light);
+}
+
+.file-drop.has-file {
+    border-color: var(--accent);
+    border-style: solid;
+    background: var(--accent-light);
+}
+
+.file-drop input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    font-size: 0;
+}
+
+.file-icon {
+    color: var(--ink-faint);
+    margin-bottom: 0.75rem;
+    transition: color 0.2s;
+}
+
+.file-drop:hover .file-icon,
+.file-drop.drag-over .file-icon,
+.file-drop.has-file .file-icon {
+    color: var(--accent);
+}
+
+.file-text {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 4px;
+}
+
+.file-sub {
+    font-size: 13px;
+    color: var(--ink-muted);
+}
+
+.file-browse {
+    color: var(--accent);
+    font-weight: 500;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.file-name {
+    margin-top: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--accent);
+    word-break: break-all;
+}
+
+textarea {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--ink);
+    background: #fdfdfc;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    resize: vertical;
+    line-height: 1.6;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    width: 100%;
+    min-height: 140px;
+}
+
+textarea::placeholder { color: var(--ink-faint); }
+
+textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(45, 90, 61, 0.1);
+}
+
+/* ── Button ── */
+.btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: var(--accent);
+    color: white;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    border: none;
+    border-radius: var(--radius);
+    padding: 15px 24px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    width: 100%;
+    letter-spacing: 0.01em;
+    text-decoration: none;
+}
+
+.btn:hover  { background: var(--accent-hover); }
+.btn:active { transform: scale(0.99); }
+
+/* ── Footer ── */
+.footer {
+    text-align: center;
+    margin-top: 1.25rem;
+    font-size: 12px;
+    color: var(--ink-faint);
+}
+
+/* ── Result score cards ── */
+.results-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.result-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px 16px;
+}
+
+.result-card h3 {
+    font-size: 12px;
+    color: var(--ink-muted);
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.result-value {
+    font-size: clamp(28px, 6vw, 36px);
+    font-weight: 700;
+    color: var(--accent);
+}
+
+/* ── Sections ── */
+.section {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.section h2 {
+    font-size: 17px;
+    margin-bottom: 15px;
+    color: var(--ink);
+}
+
+/* ── Tags ── */
+.tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.tag {
+    background: var(--accent-light);
+    color: var(--accent);
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.tag-missing {
+    background: #fff0f0;
+    color: #c0392b;
+}
+
+/* ── Role cards ── */
+.role-card {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 10px;
+    background: #fcfcfb;
+}
+
+/* ── Progress bar ── */
+.progress {
+    width: 100%;
+    height: 8px;
+    background: #ece8e1;
+    border-radius: 999px;
+    overflow: hidden;
+    margin-top: 12px;
+}
+
+.progress-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 999px;
+}
+
+/* ── History table ── */
+.table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 520px;   /* prevents squishing; wrapper scrolls on mobile */
+}
+
+th, td {
+    padding: 12px 10px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+}
+
+th {
+    color: var(--ink);
+    font-weight: 600;
+    font-size: 13px;
+}
+
+td {
+    color: var(--ink-muted);
+    font-size: 13px;
+}
+
+/* ── Score badges (history) ── */
+.score-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+}
+.score-green  { background: #edf4ef; color: #2d5a3d; }
+.score-yellow { background: #fef9ec; color: #a07c00; }
+.score-red    { background: #fff0f0; color: #c0392b; }
+
+.btn-details {
+    display: inline-block;
+    background: var(--accent-light);
+    color: var(--accent);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 5px 12px;
+    border-radius: 8px;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background 0.2s;
+}
+.btn-details:hover { background: #d4e8d9; }
+
+/* ── Summary text ── */
+.summary-text {
+    color: var(--ink-muted);
+    line-height: 1.8;
+    font-size: 15px;
+}
+
+/* ── Chart ── */
+canvas {
+    margin-top: 15px;
+    max-height: 300px;
+}
+
+/* ── Mobile overrides ── */
+@media (max-width: 540px) {
+    body { padding: 1.25rem 0.75rem; }
+
+    .form { padding: 1.5rem 1.25rem; }
+
+    .results-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+    }
+
+    .result-card { padding: 14px 10px; }
+
+    .section { padding: 16px; }
+
+    .btn { font-size: 14px; padding: 13px 18px; }
+
+    /* History table scrolls horizontally on mobile */
+    .section .table-wrapper { margin: 0 -16px; padding: 0 16px; }
+}

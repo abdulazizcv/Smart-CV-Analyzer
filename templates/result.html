@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analysis Result</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<div class="container">
+
+    <header class="header">
+        <div class="badge">{% if from_history %}From History{% else %}Analysis Complete{% endif %}</div>
+        <h1>CV Analysis Results</h1>
+        {% if original_filename %}
+            <p class="subtitle">{{ original_filename }}{% if characters %} · {{ characters }} characters{% endif %}</p>
+        {% endif %}
+    </header>
+
+    <!-- Score Cards -->
+    <div class="results-grid">
+        <div class="result-card">
+            <h3>ATS Score</h3>
+            <div class="result-value">{{ ats_score | int }}%</div>
+            <div class="progress"><div class="progress-fill" style="width: {{ ats_score }}%"></div></div>
+        </div>
+        <div class="result-card">
+            <h3>Job Match</h3>
+            <div class="result-value">{{ match_score | int }}%</div>
+            <div class="progress"><div class="progress-fill" style="width: {{ match_score }}%"></div></div>
+        </div>
+        <div class="result-card">
+            <h3>AI Match</h3>
+            <div class="result-value">{{ semantic_match_score | int }}%</div>
+            <div class="progress"><div class="progress-fill" style="width: {{ semantic_match_score }}%"></div></div>
+        </div>
+    </div>
+
+    <!-- Action buttons -->
+    <div style="display:flex; gap:12px; margin-bottom:20px; flex-wrap:wrap;">
+        <a href="/report/{{ result_id }}" class="btn" style="text-decoration:none; width:auto; padding: 11px 20px; font-size:14px;">
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M12 10v6m0 0l-3-3m3 3l3-3M3 17V7a2 2 0 012-2h6l2 2h4a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+            </svg>
+            Download PDF Report
+        </a>
+    </div>
+
+    <!-- Summary -->
+    <div class="section">
+        <h2>Summary</h2>
+        <p class="summary-text">{{ summary }}</p>
+    </div>
+
+    <!-- ATS Breakdown -->
+    {% if ats_explanation %}
+    <div class="section">
+        <h2>ATS Score Breakdown</h2>
+        <p style="font-size:13px; color: var(--ink-muted); margin-bottom: 12px;">
+            Skills in your <strong>Skills</strong> or <strong>Experience</strong> section score full points.
+            Skills only mentioned elsewhere score half points.
+        </p>
+        <pre style="font-family: 'DM Sans', sans-serif; font-size: 14px; line-height: 2; white-space: pre-wrap; color: var(--ink);">{{ ats_explanation }}</pre>
+    </div>
+    {% endif %}
+
+    <!-- Chart -->
+    <div class="section">
+        <h2>Performance Dashboard</h2>
+        <canvas id="scoreChart"></canvas>
+    </div>
+
+    <!-- Skills Found -->
+    <div class="section">
+        <h2>Skills Found</h2>
+        <div class="tags">
+            {% if found_skills %}
+                {% for skill in found_skills %}
+                    <span class="tag"
+                          {% if section_map and skill in section_map %}
+                          title="Found in: {{ section_map[skill] | join(', ') }}"
+                          {% endif %}>
+                        {{ skill }}
+                    </span>
+                {% endfor %}
+            {% else %}
+                <p style="color: var(--ink-muted);">No recognized skills found.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Missing Required Skills -->
+    <div class="section">
+        <h2>Missing Required Skills</h2>
+        <div class="tags">
+            {% if missing_skills %}
+                {% for skill in missing_skills %}
+                    <span class="tag tag-missing">{{ skill }}</span>
+                {% endfor %}
+            {% else %}
+                <p style="color: var(--ink-muted);">No missing required skills — great work!</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Recommended Roles -->
+    <div class="section">
+        <h2>Recommended Roles</h2>
+        {% if recommended_roles %}
+            {% for item in recommended_roles %}
+                <div class="role-card">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <strong>{{ item.role }}</strong>
+                        <span style="color: var(--accent); font-weight: 600;">{{ item.match_pct }}% match</span>
+                    </div>
+                    <div class="progress" style="margin-top:10px;">
+                        <div class="progress-fill" style="width: {{ item.match_pct }}%"></div>
+                    </div>
+                    <p style="font-size:12px; color: var(--ink-muted); margin-top:8px;">
+                        Matched: {{ item.matched | join(', ') }}
+                    </p>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p style="color: var(--ink-muted);">No suitable roles detected based on current skills.</p>
+        {% endif %}
+    </div>
+
+    <!-- Job Description Match -->
+    {% if matched_job_skills or missing_job_skills %}
+    <div class="section">
+        <h2>Job Description Match</h2>
+        {% if matched_job_skills %}
+            <p style="font-size:13px; font-weight:600; margin-bottom:8px;">Skills you have ✓</p>
+            <div class="tags" style="margin-bottom:16px;">
+                {% for skill in matched_job_skills %}<span class="tag">{{ skill }}</span>{% endfor %}
+            </div>
+        {% endif %}
+        {% if missing_job_skills %}
+            <p style="font-size:13px; font-weight:600; margin-bottom:8px;">Skills you're missing ✗</p>
+            <div class="tags">
+                {% for skill in missing_job_skills %}<span class="tag tag-missing">{{ skill }}</span>{% endfor %}
+            </div>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- Recommendations -->
+    <div class="section">
+        <h2>Recommendations</h2>
+        {% if recommendations %}
+            {% for rec in recommendations %}
+                <div class="role-card">{{ rec }}</div>
+            {% endfor %}
+        {% else %}
+            <p style="color: var(--ink-muted);">Your CV is a strong match — no major gaps detected.</p>
+        {% endif %}
+    </div>
+
+    <footer class="footer">
+        <a href="/" style="color: var(--accent); text-decoration: none;">← Analyze another CV</a>
+        &nbsp;·&nbsp;
+        <a href="/history" style="color: var(--accent); text-decoration: none;">View history</a>
+    </footer>
+
+</div>
+
+<script>
+new Chart(document.getElementById('scoreChart'), {
+    type: 'bar',
+    data: {
+        labels: ['ATS Score', 'Job Match', 'AI Match'],
+        datasets: [{
+            data: [{{ ats_score | int }}, {{ match_score | int }}, {{ semantic_match_score | int }}],
+            backgroundColor: ['#2d5a3d', '#3a7d52', '#4e9e6a'],
+            borderRadius: 8,
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true, max: 100, ticks: { callback: v => v + '%' } } }
+    }
+});
+</script>
+
+</body>
+</html>
