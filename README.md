@@ -26,7 +26,19 @@ An AI-powered CV analysis tool built with FastAPI. Upload your CV and get instan
 
 ## Screenshots
 
-> Add screenshots here after running the project locally.
+### Upload Form
+![Home](screenshots/home.png)
+
+### Analysis Results
+![Results](screenshots/results.png)
+
+![Results](screenshots/results2.png)
+
+### History
+![History](screenshots/history.png)
+
+### PDF Report
+![Report](screenshots/report.png)
 
 ---
 
@@ -179,4 +191,4 @@ MIT License — feel free to use, modify, and distribute.
 
 ## Author
 
-Built by [Your Name](https://github.com/your-username)
+Built by [Abdulaziz Ismail Abdulrab]
